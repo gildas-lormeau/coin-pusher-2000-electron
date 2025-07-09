@@ -1,0 +1,3 @@
+[submodule "game"]
+	path = game
+	url = https://github.com/gildas-lormeau/coin-pusher-2000.git

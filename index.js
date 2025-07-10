@@ -1,8 +1,7 @@
+import { join, extname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { stat, readFile } from "node:fs/promises";
 import { app, BrowserWindow, protocol } from "electron";
-import { readFile } from "fs/promises";
-import { join, extname } from "path";
-import { fileURLToPath } from "url";
-import { existsAsync } from "fs";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -10,10 +9,10 @@ app.whenReady().then(() => {
     protocol.handle("file", async (request) => {
         const url = new URL(request.url);
         let filePath = fileURLToPath(url);
-        const fileExists = await existsAsync(filePath);
+        const fileExists = await exists(filePath);
         if (!fileExists && url.pathname.startsWith(__dirname)) {
             filePath = join(__dirname, "game", "public", url.pathname.substring(__dirname.length));
-            const fileExists = await existsAsync(filePath);
+            const fileExists = await exists(filePath);
             if (!fileExists) {
                 return new Response("File not found", { status: 404 });
             }
@@ -45,6 +44,15 @@ app.whenReady().then(() => {
 
     createWindow();
 });
+
+async function exists(filePath) {
+    try {
+        await stat(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+}
 
 const createWindow = () => {
     const mainWindow = new BrowserWindow({

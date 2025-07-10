@@ -3,58 +3,66 @@ import { fileURLToPath } from "node:url";
 import { stat, readFile } from "node:fs/promises";
 import { app, BrowserWindow, protocol } from "electron";
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
+const MIME_TYPES = {
+    ".html": "text/html",
+    ".js": "application/javascript",
+    ".css": "text/css",
+    ".glb": "model/gltf-binary",
+    ".exr": "image/x-exr",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".woff2": "font/woff2",
+    ".woff": "font/woff",
+    ".json": "application/json"
+};
+const DEFAULT_MIME_TYPE = "application/octet-stream";
+const CONTENT_TYPE_HEADER = "Content-Type";
+const FILE_NOT_FOUND_RESPONSE = new Response("File not found", { status: 404 });
+const APP_DIRNAME = fileURLToPath(new URL(".", import.meta.url));
+const PUBLIC_DIRNAME = join(APP_DIRNAME, "game", "public");
+const APP_PATHNAME = "./index.html";
+main();
 
-app.whenReady().then(() => {
-    protocol.handle("file", async (request) => {
-        const url = new URL(request.url);
-        let filePath = fileURLToPath(url);
-        const fileExists = await exists(filePath);
-        if (!fileExists && url.pathname.startsWith(__dirname)) {
-            filePath = join(__dirname, "game", "public", url.pathname.substring(__dirname.length));
-            const fileExists = await exists(filePath);
-            if (!fileExists) {
-                return new Response("File not found", { status: 404 });
-            }
-        }
-        try {
-            const ext = extname(filePath).toLowerCase();
-            let mimeType = "application/octet-stream";
-            const mimeTypes = {
-                ".html": "text/html",
-                ".js": "application/javascript",
-                ".css": "text/css",
-                ".glb": "model/gltf-binary",
-                ".exr": "image/x-exr",
-                ".png": "image/png",
-                ".jpg": "image/jpeg",
-                ".jpeg": "image/jpeg",
-                ".woff2": "font/woff2",
-                ".woff": "font/woff",
-                ".json": "application/json"
-            };
-            if (mimeTypes[ext]) {
-                mimeType = mimeTypes[ext];
-            }
-            return new Response(await readFile(filePath), { headers: { "Content-Type": mimeType } });
-        } catch (error) {
-            return new Response("File not found", { status: 404 });
-        }
-    });
+async function main() {
+    await app.whenReady();
+    protocol.handle("file", onFileProtocol);
+    await createWindow();
+    app.on("activate", onActivate);
+    app.on("window-all-closed", onClose);
+}
 
-    createWindow();
-});
-
-async function exists(filePath) {
-    try {
-        await stat(filePath);
-        return true;
-    } catch {
-        return false;
+async function onActivate() {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        await createWindow();
     }
 }
 
-const createWindow = () => {
+function onClose() {
+    if (process.platform !== "darwin") {
+        app.quit();
+    }
+}
+
+async function onFileProtocol(request) {
+    const url = new URL(request.url);
+    let filePath = fileURLToPath(url);
+    if (!await exists(fileURLToPath(url))) {
+        if (url.pathname.startsWith(APP_DIRNAME)) {
+            filePath = join(PUBLIC_DIRNAME, url.pathname.substring(APP_DIRNAME.length));
+            if (!await exists(filePath)) {
+                return FILE_NOT_FOUND_RESPONSE;
+            }
+        } else {
+            return FILE_NOT_FOUND_RESPONSE;
+        }
+    }
+    const fileExtension = extname(filePath).toLowerCase();
+    const mimeType = MIME_TYPES[fileExtension] ? MIME_TYPES[fileExtension] : DEFAULT_MIME_TYPE;
+    return new Response(await readFile(filePath), { headers: { [CONTENT_TYPE_HEADER]: mimeType } });
+}
+
+async function createWindow() {
     const mainWindow = new BrowserWindow({
         fullscreen: true,
         webPreferences: {
@@ -64,13 +72,14 @@ const createWindow = () => {
             webSecurity: false
         }
     });
-    mainWindow.loadFile("./index.html");
-};
+    await mainWindow.loadFile(APP_PATHNAME);
+}
 
-app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-});
-
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") app.quit();
-});
+async function exists(filePath) {
+    try {
+        await stat(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+}

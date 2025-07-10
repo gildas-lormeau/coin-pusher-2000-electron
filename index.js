@@ -25,11 +25,11 @@ const APP_PATHNAME = "./index.html";
 main();
 
 async function main() {
+    app.on("activate", onActivate);
+    app.on("window-all-closed", onClose);
     await app.whenReady();
     protocol.handle("file", onFileProtocol);
     await createWindow();
-    app.on("activate", onActivate);
-    app.on("window-all-closed", onClose);
 }
 
 async function onActivate() {

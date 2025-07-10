@@ -2,7 +2,7 @@ import { app, BrowserWindow, protocol } from "electron";
 import { readFile } from "fs/promises";
 import { join, extname } from "path";
 import { fileURLToPath } from "url";
-import { existsSync } from "fs";
+import { existsAsync } from "fs";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -10,9 +10,11 @@ app.whenReady().then(() => {
     protocol.handle("file", async (request) => {
         const url = new URL(request.url);
         let filePath = fileURLToPath(url);
-        if (!existsSync(filePath) && url.pathname.startsWith(__dirname)) {
+        const fileExists = await existsAsync(filePath);
+        if (!fileExists && url.pathname.startsWith(__dirname)) {
             filePath = join(__dirname, "game", "public", url.pathname.substring(__dirname.length));
-            if (!existsSync(filePath)) {
+            const fileExists = await existsAsync(filePath);
+            if (!fileExists) {
                 return new Response("File not found", { status: 404 });
             }
         }

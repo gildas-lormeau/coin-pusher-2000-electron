@@ -11,7 +11,7 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bincode = "1.3"
+bincode = { version = "2.0", features = ["serde"] }
 neon = "1.1"
 rapier3d = { version = "0.26", features = ["parallel", "simd-stable", "serde-serialize"] }
 nalgebra = "0.33"

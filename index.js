@@ -39,9 +39,7 @@ async function onActivate() {
 }
 
 function onClose() {
-    if (process.platform !== "darwin") {
-        app.quit();
-    }
+    app.quit();
 }
 
 async function onFileProtocol(request) {

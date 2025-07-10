@@ -19,6 +19,7 @@
     "three": "^0.178.0"
   },
   "devDependencies": {
-    "neon-cli": "^0.10.1"
+    "neon-cli": "^0.10.1",
+    "@neon-rs/cli": "0.1.82"
   }
 }

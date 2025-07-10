@@ -9,8 +9,5 @@
     "build-debug": "/Users/gildas/.cargo/bin/cargo build && cp target/debug/librapier_native.dylib index.node"
   },
   "author": "Gildas Lormeau",
-  "license": "AGPL",
-  "devDependencies": {
-    "@neon-rs/cli": "0.1.82"
-  }
+  "license": "AGPL"
 }

@@ -7,7 +7,7 @@
     "dev": "electron . --dev",
     "build-native": "cd rapier3d-simd-electron && npm run build",
     "build": "npm run build-native",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "package": "electron-builder"
   },
   "type": "module",
   "keywords": [],
@@ -15,11 +15,41 @@
   "license": "AGPL",
   "description": "Coin Pusher game using Electron with native Rapier physics",
   "dependencies": {
-    "electron": "^37.2.0",
     "three": "^0.178.0"
   },
   "devDependencies": {
+    "electron": "^37.2.0",
     "neon-cli": "^0.10.1",
-    "@neon-rs/cli": "0.1.82"
+    "@neon-rs/cli": "0.1.82",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.coinpusher2000.app",
+    "productName": "Coin Pusher 2000",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules",
+      "!dist",
+      "!*.md",
+      "!*.gitignore"
+    ],
+    "extraResources": [
+      {
+        "from": "game",
+        "to": "game"
+      }
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

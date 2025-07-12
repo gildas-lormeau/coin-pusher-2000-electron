@@ -5,8 +5,9 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
-    "build-native": "cd rapier3d-simd-electron && npm run build",
-    "build": "npm run build-native",
+    "build-native": "cd rapier3d-electron && npm run build",
+    "build-native-f64": "cd rapier3d-f64-electron && npm run build",
+    "build": "npm run build-native && npm run build-native-f64",
     "package": "electron-builder"
   },
   "type": "module",
@@ -18,10 +19,10 @@
     "three": "^0.178.0"
   },
   "devDependencies": {
-    "electron": "^37.2.0",
-    "neon-cli": "^0.10.1",
     "@neon-rs/cli": "0.1.82",
-    "electron-builder": "^26.0.12"
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12",
+    "neon-cli": "^0.10.1"
   },
   "build": {
     "appId": "com.coinpusher2000.app",

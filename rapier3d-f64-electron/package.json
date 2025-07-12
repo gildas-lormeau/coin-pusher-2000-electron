@@ -1,0 +1,13 @@
+{
+  "name": "rapier3d-f64-electron",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.node",
+  "scripts": {
+    "test": "cargo test",
+    "build": "cargo build --release && cp target/release/librapier3d_f64_electron.dylib index.node",
+    "build-debug": "cargo build && cp target/debug/librapier3d_f64_electron.dylib index.node"
+  },
+  "author": "Gildas Lormeau",
+  "license": "AGPL"
+}

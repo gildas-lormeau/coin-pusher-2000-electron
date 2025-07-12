@@ -1,5 +1,4 @@
-use bincode::config;
-use bincode::serde::{decode_from_slice, encode_to_vec};
+use bincode::{deserialize, serialize};
 use nalgebra::{Quaternion, Translation3, Unit, UnitQuaternion, Vector3};
 use rapier3d::geometry::{InteractionGroups, TriMeshFlags};
 use rapier3d::prelude::*;
@@ -1047,14 +1046,12 @@ impl World {
             multibody_joints: self.multibody_joint_set.clone(),
         };
 
-        let config = config::standard();
-        encode_to_vec(&serializable_world, config).unwrap_or_else(|_| Vec::new())
+        serialize(&serializable_world).unwrap_or_else(|_| Vec::new())
     }
 
     pub fn restore_snapshot(&mut self, snapshot: &[u8]) -> bool {
-        let config = config::standard();
-        match decode_from_slice::<SerializableWorld, _>(snapshot, config) {
-            Ok((world_data, _)) => {
+        match deserialize::<SerializableWorld>(snapshot) {
+            Ok(world_data) => {
                 self.gravity = world_data.gravity;
                 self.integration_parameters = world_data.integration_parameters;
                 self.island_manager = world_data.islands;

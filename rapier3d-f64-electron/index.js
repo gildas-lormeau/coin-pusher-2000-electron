@@ -1,4 +1,4 @@
-const nativeRapier = require("./rapier3d-simd-electron");
+const nativeRapier = require("./rapier3d-f64-electron");
 
 class Vector3 {
     constructor(x = 0, y = 0, z = 0) {
@@ -54,6 +54,7 @@ class World {
 
     constructor(gravity) {
         const rigidBodies = this.#rigidBodies;
+
         nativeRapier.initWorld(gravity.x, gravity.y, gravity.z);
         this.integrationParameters = {
             /**

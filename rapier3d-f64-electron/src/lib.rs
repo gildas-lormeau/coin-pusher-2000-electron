@@ -640,13 +640,13 @@ impl World {
         }
     }
 
-    pub fn get_body_num_colliders(&self, handle: f64) -> f64 {
+    pub fn get_body_num_colliders(&self, handle: f64) -> usize {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get(handle) {
-            body.colliders().len() as f64
+            body.colliders().len()
         } else {
-            0.0
+            0
         }
     }
 
@@ -1296,12 +1296,12 @@ fn add_box_collider(
                 half_y,
                 half_z,
                 is_sensor,
-                pos_x.map(|v| v),
-                pos_y.map(|v| v),
-                pos_z.map(|v| v),
-                rot_x.map(|v| v),
-                rot_y.map(|v| v),
-                rot_z.map(|v| v),
+                pos_x,
+                pos_y,
+                pos_z,
+                rot_x,
+                rot_y,
+                rot_z,
             )
         } else {
             0.0
@@ -1329,12 +1329,12 @@ fn add_cylinder_collider(
                 half_height,
                 radius,
                 is_sensor,
-                pos_x.map(|v| v),
-                pos_y.map(|v| v),
-                pos_z.map(|v| v),
-                rot_x.map(|v| v),
-                rot_y.map(|v| v),
-                rot_z.map(|v| v),
+                pos_x,
+                pos_y,
+                pos_z,
+                rot_x,
+                rot_y,
+                rot_z,
             )
         } else {
             0.0
@@ -1360,16 +1360,16 @@ fn add_trimesh_collider(
         if let Some(ref mut world) = WORLD {
             world.add_trimesh_collider(
                 handle,
-                vertices.into_iter().map(|v| v).collect(),
+                vertices.into_iter().collect(),
                 indices.into_iter().map(|v| v as u32).collect(),
                 is_sensor,
                 trimesh_flags as u32,
-                pos_x.map(|v| v),
-                pos_y.map(|v| v),
-                pos_z.map(|v| v),
-                rot_x.map(|v| v),
-                rot_y.map(|v| v),
-                rot_z.map(|v| v),
+                pos_x,
+                pos_y,
+                pos_z,
+                rot_x,
+                rot_y,
+                rot_z,
             )
         } else {
             0.0
@@ -1393,14 +1393,14 @@ fn add_convex_hull_collider(
         if let Some(ref mut world) = WORLD {
             world.add_convex_hull_collider(
                 handle,
-                vertices.into_iter().map(|v| v).collect(),
+                vertices.into_iter().collect(),
                 is_sensor,
-                pos_x.map(|v| v),
-                pos_y.map(|v| v),
-                pos_z.map(|v| v),
-                rot_x.map(|v| v),
-                rot_y.map(|v| v),
-                rot_z.map(|v| v),
+                pos_x,
+                pos_y,
+                pos_z,
+                rot_x,
+                rot_y,
+                rot_z,
             )
         } else {
             0.0
@@ -1903,7 +1903,7 @@ fn set_body_linear_damping(handle: f64, damping: f64) -> bool {
 fn get_body_num_colliders(handle: f64) -> f64 {
     unsafe {
         if let Some(ref world) = WORLD {
-            world.get_body_num_colliders(handle)
+            world.get_body_num_colliders(handle) as f64
         } else {
             -1.0
         }
@@ -2067,7 +2067,7 @@ fn get_collider_vertices(handle: f64) -> Vec<f64> {
     unsafe {
         if let Some(ref world) = WORLD {
             if let Some(vertices) = world.get_collider_vertices(handle) {
-                vertices.into_iter().map(|v| v).collect()
+                vertices.into_iter().collect()
             } else {
                 vec![]
             }
@@ -2078,11 +2078,11 @@ fn get_collider_vertices(handle: f64) -> Vec<f64> {
 }
 
 #[neon::export]
-fn get_collider_indices(handle: f64) -> Vec<u32> {
+fn get_collider_indices(handle: f64) -> Vec<f64> {
     unsafe {
         if let Some(ref world) = WORLD {
             if let Some(indices) = world.get_collider_indices(handle) {
-                indices.into_iter().map(|i: u32| i).collect()
+                indices.into_iter().map(|i| i as f64).collect()
             } else {
                 vec![]
             }

@@ -3,13 +3,19 @@ rm -rf build
 npx vite build
 cp package.json build
 cp index.js build
-cp -R rapier3d-f64-electron build/rapier3d-f64-electron
+mkdir -p build/rapier3d-f64-electron
+cp rapier3d-f64-electron/index.js build/rapier3d-f64-electron/
+cp rapier3d-f64-electron/index.node build/rapier3d-f64-electron/
+cp rapier3d-f64-electron/package.json build/rapier3d-f64-electron/
+mkdir -p build/rapier3d-f64-electron/target/release
+cp rapier3d-f64-electron/target/release/librapier3d* build/rapier3d-f64-electron/target/release/
 cp game/public/assets/* build/assets
+rm build/assets/*.blend
 mkdir -p build/views
 cp game/public/views/* build/views
 cd build
 npm install
-CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder
+CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --mac --arm64 --x64
 cd ..
 rm -rf dist
 mkdir -p dist

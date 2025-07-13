@@ -236,6 +236,7 @@ class World {
     }
 
     step(timestep = this.#timestep) {
+        RigidBody.step();
         nativeRapier.stepSimulation(timestep);
     }
 
@@ -331,6 +332,15 @@ class World {
 }
 
 class RigidBody {
+    static #translations = [];
+    static #translationsInvalidated = true;
+    static #rotations = [];
+    static #rotationsInvalidated = true;
+
+    static step() {
+        this.#translationsInvalidated = true;
+        this.#rotationsInvalidated = true;
+    }
 
     colliders = [];
 
@@ -339,13 +349,44 @@ class RigidBody {
     }
 
     translation() {
-        const pos = nativeRapier.getBodyTranslation(this.handle);
-        return new Vector3(pos[0], pos[1], pos[2]);
+        if (RigidBody.#translationsInvalidated) {
+            RigidBody.#translationsInvalidated = false;
+            const positions = nativeRapier.getBodyTranslations();
+            for (let i = 0; i < positions.length; i += 4) {
+                const handle = positions[i];
+                const x = positions[i + 1];
+                const y = positions[i + 2];
+                const z = positions[i + 3];
+                let translation = RigidBody.#translations[handle];
+                if (!translation) {
+                    translation = new Vector3();
+                    RigidBody.#translations[handle] = translation;
+                }
+                Object.assign(translation, { x, y, z });
+            }
+        }
+        return RigidBody.#translations[this.handle];
     }
 
     rotation() {
-        const rot = nativeRapier.getBodyRotation(this.handle);
-        return new Quaternion(rot[0], rot[1], rot[2], rot[3]);
+        if (RigidBody.#rotationsInvalidated) {
+            RigidBody.#rotationsInvalidated = false;
+            const rotations = nativeRapier.getBodyRotations();
+            for (let i = 0; i < rotations.length; i += 5) {
+                const handle = rotations[i];
+                const x = rotations[i + 1];
+                const y = rotations[i + 2];
+                const z = rotations[i + 3];
+                const w = rotations[i + 4];
+                let rotation = RigidBody.#rotations[handle];
+                if (!rotation) {
+                    rotation = new Quaternion();
+                    RigidBody.#rotations[handle] = rotation;
+                }
+                Object.assign(rotation, { x, y, z, w });
+            }
+        }
+        return RigidBody.#rotations[this.handle];
     }
 
     setTranslation(vector, wakeUp = true) {

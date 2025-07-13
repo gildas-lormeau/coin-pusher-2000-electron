@@ -546,6 +546,18 @@ impl World {
         }
     }
 
+    pub fn get_body_translations(&self) -> Vec<f64> {
+        self.rigid_body_set
+            .iter()
+            .flat_map(|(handle, body)| {
+                let translation = body.translation();
+                let (index, generation) = handle.into_raw_parts();
+                let encoded_handle = encode_handle_for_js(index, generation);
+                vec![encoded_handle, translation.x, translation.y, translation.z]
+            })
+            .collect()
+    }
+
     pub fn get_body_rotation(&self, handle: f64) -> Option<(f64, f64, f64, f64)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
@@ -555,6 +567,24 @@ impl World {
         } else {
             None
         }
+    }
+
+    pub fn get_body_rotations(&self) -> Vec<f64> {
+        self.rigid_body_set
+            .iter()
+            .flat_map(|(_handle, body)| {
+                let rotation = body.rotation();
+                let (index, generation) = _handle.into_raw_parts();
+                let encoded_handle = encode_handle_for_js(index, generation);
+                vec![
+                    encoded_handle,
+                    rotation.i,
+                    rotation.j,
+                    rotation.k,
+                    rotation.w,
+                ]
+            })
+            .collect()
     }
 
     pub fn get_body_velocity(&self, handle: f64) -> Option<(f64, f64, f64)> {
@@ -1291,17 +1321,7 @@ fn add_box_collider(
     unsafe {
         if let Some(ref mut world) = WORLD {
             world.add_box_collider(
-                handle,
-                half_x,
-                half_y,
-                half_z,
-                is_sensor,
-                pos_x,
-                pos_y,
-                pos_z,
-                rot_x,
-                rot_y,
-                rot_z,
+                handle, half_x, half_y, half_z, is_sensor, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z,
             )
         } else {
             0.0
@@ -1707,6 +1727,17 @@ fn get_body_translation(handle: f64) -> Vec<f64> {
 }
 
 #[neon::export]
+fn get_body_translations() -> Vec<f64> {
+    unsafe {
+        if let Some(ref world) = WORLD {
+            world.get_body_translations()
+        } else {
+            Vec::new()
+        }
+    }
+}
+
+#[neon::export]
 fn get_body_rotation(handle: f64) -> Vec<f64> {
     unsafe {
         if let Some(ref world) = WORLD {
@@ -1717,6 +1748,17 @@ fn get_body_rotation(handle: f64) -> Vec<f64> {
             }
         } else {
             vec![]
+        }
+    }
+}
+
+#[neon::export]
+fn get_body_rotations() -> Vec<f64> {
+    unsafe {
+        if let Some(ref world) = WORLD {
+            world.get_body_rotations()
+        } else {
+            Vec::new()
         }
     }
 }

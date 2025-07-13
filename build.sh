@@ -11,6 +11,9 @@ mkdir -p build/rapier3d-f64-electron/target/release
 cp rapier3d-f64-electron/target/release/librapier3d* build/rapier3d-f64-electron/target/release/
 cp game/public/assets/* build/assets
 rm build/assets/*.blend
+rm build/assets/*.xcf
+rm build/assets/*.txt
+find build/assets -type f -name "*.exr" ! -name "sunset.exr" -delete
 mkdir -p build/views
 cp game/public/views/* build/views
 cd build

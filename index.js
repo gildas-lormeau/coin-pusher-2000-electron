@@ -1,7 +1,7 @@
 import { join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { stat, readFile } from "node:fs/promises";
-import { app, BrowserWindow, protocol } from "electron";
+import { app, BrowserWindow, protocol, screen } from "electron";
 
 const MIME_TYPES = {
     ".html": "text/html",
@@ -61,14 +61,18 @@ async function onFileProtocol(request) {
 }
 
 async function createWindow() {
+    const { workArea } = screen.getPrimaryDisplay();
     const mainWindow = new BrowserWindow({
-        fullscreen: true,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: true,
             webSecurity: false
-        }
+        },
+        x: workArea.x,
+        y: workArea.y,
+        width: workArea.width,
+        height: workArea.height,
     });
     await mainWindow.loadFile(APP_PATHNAME);
 }

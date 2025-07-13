@@ -29,6 +29,13 @@ Launch the following command to run the game.
 npm start
 ```
 
+# Package
+
+Launch the following command to run the game. 
+```sh
+npm run package
+```
+
 # Troubleshooting
 
 If you encounter build errors:

@@ -391,11 +391,17 @@ class RigidBody {
 
     setTranslation(vector, wakeUp = true) {
         nativeRapier.setBodyTranslation(this.handle, vector.x, vector.y, vector.z, wakeUp);
+        if (!RigidBody.#translationsInvalidated) {
+            RigidBody.#translations[this.handle] = vector;
+        }
         return this;
     }
 
     setRotation(quaternion, wakeUp = true) {
         nativeRapier.setBodyRotation(this.handle, quaternion.x, quaternion.y, quaternion.z, quaternion.w, wakeUp);
+        if (!RigidBody.#rotationsInvalidated) {
+            RigidBody.#rotations[this.handle] = quaternion;
+        }
         return this;
     }
 

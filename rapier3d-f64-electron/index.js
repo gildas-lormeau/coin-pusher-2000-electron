@@ -392,7 +392,11 @@ class RigidBody {
     setTranslation(vector, wakeUp = true) {
         nativeRapier.setBodyTranslation(this.handle, vector.x, vector.y, vector.z, wakeUp);
         if (!RigidBody.#translationsInvalidated) {
-            RigidBody.#translations[this.handle] = vector;
+            Object.assign(RigidBody.#translations[this.handle], {
+                x: vector.x,
+                y: vector.y,
+                z: vector.z
+            });
         }
         return this;
     }
@@ -400,7 +404,12 @@ class RigidBody {
     setRotation(quaternion, wakeUp = true) {
         nativeRapier.setBodyRotation(this.handle, quaternion.x, quaternion.y, quaternion.z, quaternion.w, wakeUp);
         if (!RigidBody.#rotationsInvalidated) {
-            RigidBody.#rotations[this.handle] = quaternion;
+            Object.assign(RigidBody.#rotations[this.handle], {
+                x: quaternion.x,
+                y: quaternion.y,
+                z: quaternion.z,
+                w: quaternion.w
+            });
         }
         return this;
     }

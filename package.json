@@ -28,6 +28,7 @@
   "build": {
     "appId": "com.coinpusher2000.app",
     "productName": "Coin Pusher 2000",
+    "compression": "maximum",
     "directories": {
       "output": "dist"
     },

@@ -13,6 +13,8 @@ cp game/public/assets/* build/assets
 rm build/assets/*.blend
 rm build/assets/*.xcf
 rm build/assets/*.txt
+rm build/assets/sunset.png
+rm build/assets/reel-icons.png
 find build/assets -type f -name "*.exr" ! -name "sunset.exr" -delete
 mkdir -p build/views
 cp game/public/views/* build/views

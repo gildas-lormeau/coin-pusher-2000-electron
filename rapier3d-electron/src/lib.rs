@@ -812,11 +812,10 @@ impl World {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get_mut(handle) {
-            let memberships = groups & 0xFFFF;
-            let filter = (groups >> 16) & 0xFFFF;
-            let memberships_group = Group::from_bits_truncate(memberships);
-            let filter_group = Group::from_bits_truncate(filter);
-            collider.set_collision_groups(InteractionGroups::new(memberships_group, filter_group));
+            collider.set_collision_groups(InteractionGroups::new(
+                Group::from_bits_retain((groups >> 16) as u32),
+                Group::from_bits_retain((groups & 0x0000_ffff) as u32),
+            ));
             true
         } else {
             false

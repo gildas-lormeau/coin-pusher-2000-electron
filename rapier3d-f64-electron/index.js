@@ -74,6 +74,12 @@ class World {
              */
             set numInternalPgsIterations(value) {
                 nativeRapier.setIntegrationParametersNumInternalPgsIterations(value);
+            },
+            /**
+             * @param {number} value
+             */
+            set minIslandSize(value) {
+                nativeRapier.setIntegrationParametersMinIslandSize(value);
             }
         };
         this.bodies = {

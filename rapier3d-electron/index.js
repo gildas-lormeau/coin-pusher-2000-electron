@@ -77,6 +77,12 @@ class World {
                     value,
                 );
             },
+            /**
+             * @param {number} value
+             */
+            set minIslandSize(value) {
+                nativeRapier.setIntegrationParametersMinIslandSize(value);
+            }
         };
         this.bodies = {
             get(handle) {

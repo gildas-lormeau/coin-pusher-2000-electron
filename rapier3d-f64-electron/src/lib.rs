@@ -24,7 +24,7 @@ pub struct World {
 
 #[derive(Serialize, Deserialize)]
 pub struct SerializableWorld {
-    gravity: Vector3<f64>,
+    gravity: Vector3<Real>,
     integration_parameters: IntegrationParameters,
     islands: IslandManager,
     broad_phase: DefaultBroadPhase,
@@ -36,12 +36,7 @@ pub struct SerializableWorld {
 }
 
 impl World {
-    pub fn get_joint_mut(&mut self, handle: f64) -> Option<&mut ImpulseJoint> {
-        let (index, generation) = decode_handle_from_js(handle);
-        let handle = ImpulseJointHandle::from_raw_parts(index, generation);
-        self.impulse_joint_set.get_mut(handle, false)
-    }
-    pub fn new(gravity_x: f64, gravity_y: f64, gravity_z: f64) -> Self {
+    pub fn new(gravity_x: Real, gravity_y: Real, gravity_z: Real) -> Self {
         let integration_parameters = IntegrationParameters::default();
         Self {
             rigid_body_set: RigidBodySet::new(),
@@ -89,16 +84,16 @@ impl World {
     pub fn add_box_collider(
         &mut self,
         handle: f64,
-        half_x: f64,
-        half_y: f64,
-        half_z: f64,
+        half_x: Real,
+        half_y: Real,
+        half_z: Real,
         is_sensor: bool,
-        pos_x: Option<f64>,
-        pos_y: Option<f64>,
-        pos_z: Option<f64>,
-        rot_x: Option<f64>,
-        rot_y: Option<f64>,
-        rot_z: Option<f64>,
+        pos_x: Option<Real>,
+        pos_y: Option<Real>,
+        pos_z: Option<Real>,
+        rot_x: Option<Real>,
+        rot_y: Option<Real>,
+        rot_z: Option<Real>,
     ) -> f64 {
         let collider = ColliderBuilder::cuboid(half_x, half_y, half_z)
             .sensor(is_sensor)
@@ -125,15 +120,15 @@ impl World {
     pub fn add_cylinder_collider(
         &mut self,
         handle: f64,
-        half_height: f64,
-        radius: f64,
+        half_height: Real,
+        radius: Real,
         is_sensor: bool,
-        pos_x: Option<f64>,
-        pos_y: Option<f64>,
-        pos_z: Option<f64>,
-        rot_x: Option<f64>,
-        rot_y: Option<f64>,
-        rot_z: Option<f64>,
+        pos_x: Option<Real>,
+        pos_y: Option<Real>,
+        pos_z: Option<Real>,
+        rot_x: Option<Real>,
+        rot_y: Option<Real>,
+        rot_z: Option<Real>,
     ) -> f64 {
         let collider = ColliderBuilder::cylinder(half_height, radius)
             .sensor(is_sensor)
@@ -160,16 +155,16 @@ impl World {
     pub fn add_trimesh_collider(
         &mut self,
         handle: f64,
-        vertices: Vec<f64>,
+        vertices: Vec<Real>,
         indices: Vec<u32>,
         is_sensor: bool,
         trimesh_flags: u32,
-        pos_x: Option<f64>,
-        pos_y: Option<f64>,
-        pos_z: Option<f64>,
-        rot_x: Option<f64>,
-        rot_y: Option<f64>,
-        rot_z: Option<f64>,
+        pos_x: Option<Real>,
+        pos_y: Option<Real>,
+        pos_z: Option<Real>,
+        rot_x: Option<Real>,
+        rot_y: Option<Real>,
+        rot_z: Option<Real>,
     ) -> f64 {
         let points: Vec<Point<Real>> = vertices
             .chunks_exact(3)
@@ -219,14 +214,14 @@ impl World {
     pub fn add_convex_hull_collider(
         &mut self,
         handle: f64,
-        vertices: Vec<f64>,
+        vertices: Vec<Real>,
         is_sensor: bool,
-        pos_x: Option<f64>,
-        pos_y: Option<f64>,
-        pos_z: Option<f64>,
-        rot_x: Option<f64>,
-        rot_y: Option<f64>,
-        rot_z: Option<f64>,
+        pos_x: Option<Real>,
+        pos_y: Option<Real>,
+        pos_z: Option<Real>,
+        rot_x: Option<Real>,
+        rot_y: Option<Real>,
+        rot_z: Option<Real>,
     ) -> f64 {
         let points: Vec<Point<Real>> = vertices
             .chunks_exact(3)
@@ -264,15 +259,15 @@ impl World {
         &mut self,
         body1_handle: f64,
         body2_handle: f64,
-        anchor1_x: f64,
-        anchor1_y: f64,
-        anchor1_z: f64,
-        anchor2_x: f64,
-        anchor2_y: f64,
-        anchor2_z: f64,
-        axis_x: f64,
-        axis_y: f64,
-        axis_z: f64,
+        anchor1_x: Real,
+        anchor1_y: Real,
+        anchor1_z: Real,
+        anchor2_x: Real,
+        anchor2_y: Real,
+        anchor2_z: Real,
+        axis_x: Real,
+        axis_y: Real,
+        axis_z: Real,
         wake_up: bool,
     ) -> f64 {
         let (index, generation) = decode_handle_from_js(body1_handle);
@@ -300,20 +295,20 @@ impl World {
         &mut self,
         body1_handle: f64,
         body2_handle: f64,
-        anchor1_x: f64,
-        anchor1_y: f64,
-        anchor1_z: f64,
-        anchor2_x: f64,
-        anchor2_y: f64,
-        anchor2_z: f64,
-        frame1_x: f64,
-        frame1_y: f64,
-        frame1_z: f64,
-        frame1_w: f64,
-        frame2_x: f64,
-        frame2_y: f64,
-        frame2_z: f64,
-        frame2_w: f64,
+        anchor1_x: Real,
+        anchor1_y: Real,
+        anchor1_z: Real,
+        anchor2_x: Real,
+        anchor2_y: Real,
+        anchor2_z: Real,
+        frame1_x: Real,
+        frame1_y: Real,
+        frame1_z: Real,
+        frame1_w: Real,
+        frame2_x: Real,
+        frame2_y: Real,
+        frame2_z: Real,
+        frame2_w: Real,
         wake_up: bool,
     ) -> f64 {
         let (index, generation) = decode_handle_from_js(body1_handle);
@@ -347,7 +342,7 @@ impl World {
         }
     }
 
-    pub fn set_revolute_joint_limits(&mut self, handle: f64, min: f64, max: f64) -> bool {
+    pub fn set_revolute_joint_limits(&mut self, handle: f64, min: Real, max: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ImpulseJointHandle::from_raw_parts(index, generation);
         if let Some(joint) = self.impulse_joint_set.get_mut(handle, false) {
@@ -365,10 +360,10 @@ impl World {
     pub fn configure_revolute_joint_motor(
         &mut self,
         handle: f64,
-        target_pos: f64,
-        target_vel: f64,
-        stiffness: f64,
-        damping: f64,
+        target_pos: Real,
+        target_vel: Real,
+        stiffness: Real,
+        damping: Real,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ImpulseJointHandle::from_raw_parts(index, generation);
@@ -387,7 +382,7 @@ impl World {
     pub fn get_joint_data(
         &self,
         handle: f64,
-    ) -> Option<(f64, f64, f64, f64, f64, f64, f64, f64, f64, f64, f64)> {
+    ) -> Option<(f64, f64, Real, Real, Real, Real, Real, Real, Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ImpulseJointHandle::from_raw_parts(index, generation);
         if let Some(joint) = self.impulse_joint_set.get(handle) {
@@ -414,9 +409,9 @@ impl World {
     pub fn set_body_next_kinematic_translation(
         &mut self,
         handle: f64,
-        x: f64,
-        y: f64,
-        z: f64,
+        x: Real,
+        y: Real,
+        z: Real,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
@@ -431,9 +426,9 @@ impl World {
     pub fn set_body_translation(
         &mut self,
         handle: f64,
-        x: f64,
-        y: f64,
-        z: f64,
+        x: Real,
+        y: Real,
+        z: Real,
         wake_up: bool,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
@@ -449,10 +444,10 @@ impl World {
     pub fn set_body_next_kinematic_rotation(
         &mut self,
         handle: f64,
-        x: f64,
-        y: f64,
-        z: f64,
-        w: f64,
+        x: Real,
+        y: Real,
+        z: Real,
+        w: Real,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
@@ -468,10 +463,10 @@ impl World {
     pub fn set_body_rotation(
         &mut self,
         handle: f64,
-        x: f64,
-        y: f64,
-        z: f64,
-        w: f64,
+        x: Real,
+        y: Real,
+        z: Real,
+        w: Real,
         wake_up: bool,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
@@ -488,9 +483,9 @@ impl World {
     pub fn set_body_velocity(
         &mut self,
         handle: f64,
-        vx: f64,
-        vy: f64,
-        vz: f64,
+        vx: Real,
+        vy: Real,
+        vz: Real,
         wake_up: bool,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
@@ -507,9 +502,9 @@ impl World {
     pub fn set_body_angular_velocity(
         &mut self,
         handle: f64,
-        wx: f64,
-        wy: f64,
-        wz: f64,
+        wx: Real,
+        wy: Real,
+        wz: Real,
         wake_up: bool,
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
@@ -523,7 +518,7 @@ impl World {
         }
     }
 
-    pub fn apply_impulse(&mut self, handle: f64, x: f64, y: f64, z: f64, wake_up: bool) -> bool {
+    pub fn apply_impulse(&mut self, handle: f64, x: Real, y: Real, z: Real, wake_up: bool) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get_mut(handle) {
@@ -535,7 +530,7 @@ impl World {
         }
     }
 
-    pub fn get_body_translation(&self, handle: f64) -> Option<(f64, f64, f64)> {
+    pub fn get_body_translation(&self, handle: f64) -> Option<(Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get(handle) {
@@ -546,7 +541,7 @@ impl World {
         }
     }
 
-    pub fn get_body_translations(&self) -> Vec<f64> {
+    pub fn get_body_translations(&self) -> Vec<Real> {
         self.rigid_body_set
             .iter()
             .flat_map(|(handle, body)| {
@@ -558,7 +553,7 @@ impl World {
             .collect()
     }
 
-    pub fn get_body_rotation(&self, handle: f64) -> Option<(f64, f64, f64, f64)> {
+    pub fn get_body_rotation(&self, handle: f64) -> Option<(Real, Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get(handle) {
@@ -569,7 +564,7 @@ impl World {
         }
     }
 
-    pub fn get_body_rotations(&self) -> Vec<f64> {
+    pub fn get_body_rotations(&self) -> Vec<Real> {
         self.rigid_body_set
             .iter()
             .flat_map(|(_handle, body)| {
@@ -587,7 +582,7 @@ impl World {
             .collect()
     }
 
-    pub fn get_body_velocity(&self, handle: f64) -> Option<(f64, f64, f64)> {
+    pub fn get_body_velocity(&self, handle: f64) -> Option<(Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get(handle) {
@@ -598,7 +593,7 @@ impl World {
         }
     }
 
-    pub fn get_body_angular_velocity(&self, handle: f64) -> Option<(f64, f64, f64)> {
+    pub fn get_body_angular_velocity(&self, handle: f64) -> Option<(Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get(handle) {
@@ -645,7 +640,7 @@ impl World {
         }
     }
 
-    pub fn get_body_mass(&self, handle: f64) -> Option<f64> {
+    pub fn get_body_mass(&self, handle: f64) -> Option<Real> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get(handle) {
@@ -680,7 +675,7 @@ impl World {
         }
     }
 
-    pub fn step(&mut self, dt: f64) {
+    pub fn step(&mut self, dt: Real) {
         self.integration_parameters.dt = dt;
 
         self.physics_pipeline.step(
@@ -700,7 +695,7 @@ impl World {
         );
     }
 
-    pub fn set_gravity(&mut self, x: f64, y: f64, z: f64) {
+    pub fn set_gravity(&mut self, x: Real, y: Real, z: Real) {
         self.gravity = Vector3::new(x, y, z);
     }
 
@@ -746,7 +741,7 @@ impl World {
         }
     }
 
-    pub fn set_body_soft_ccd_prediction(&mut self, handle: f64, prediction: f64) -> bool {
+    pub fn set_body_soft_ccd_prediction(&mut self, handle: f64, prediction: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get_mut(handle) {
@@ -783,7 +778,7 @@ impl World {
         }
     }
 
-    pub fn set_body_angular_damping(&mut self, handle: f64, damping: f64) -> bool {
+    pub fn set_body_angular_damping(&mut self, handle: f64, damping: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get_mut(handle) {
@@ -794,7 +789,7 @@ impl World {
         }
     }
 
-    pub fn set_body_linear_damping(&mut self, handle: f64, damping: f64) -> bool {
+    pub fn set_body_linear_damping(&mut self, handle: f64, damping: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = RigidBodyHandle::from_raw_parts(index, generation);
         if let Some(body) = self.rigid_body_set.get_mut(handle) {
@@ -805,7 +800,7 @@ impl World {
         }
     }
 
-    pub fn set_collider_density(&mut self, handle: f64, density: f64) -> bool {
+    pub fn set_collider_density(&mut self, handle: f64, density: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get_mut(handle) {
@@ -816,7 +811,7 @@ impl World {
         }
     }
 
-    pub fn set_collider_friction(&mut self, handle: f64, friction: f64) -> bool {
+    pub fn set_collider_friction(&mut self, handle: f64, friction: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get_mut(handle) {
@@ -827,7 +822,7 @@ impl World {
         }
     }
 
-    pub fn set_collider_restitution(&mut self, handle: f64, restitution: f64) -> bool {
+    pub fn set_collider_restitution(&mut self, handle: f64, restitution: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get_mut(handle) {
@@ -852,7 +847,7 @@ impl World {
         }
     }
 
-    pub fn set_collider_contact_skin(&mut self, handle: f64, contact_skin: f64) -> bool {
+    pub fn set_collider_contact_skin(&mut self, handle: f64, contact_skin: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get_mut(handle) {
@@ -920,7 +915,7 @@ impl World {
         }
     }
 
-    pub fn get_collider_translation(&self, handle: f64) -> Option<(f64, f64, f64)> {
+    pub fn get_collider_translation(&self, handle: f64) -> Option<(Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get(handle) {
@@ -931,7 +926,7 @@ impl World {
         }
     }
 
-    pub fn get_collider_rotation(&self, handle: f64) -> Option<(f64, f64, f64, f64)> {
+    pub fn get_collider_rotation(&self, handle: f64) -> Option<(Real, Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get(handle) {
@@ -942,7 +937,7 @@ impl World {
         }
     }
 
-    pub fn get_collider_vertices(&self, handle: f64) -> Option<Vec<f64>> {
+    pub fn get_collider_vertices(&self, handle: f64) -> Option<Vec<Real>> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get(handle) {
@@ -992,7 +987,7 @@ impl World {
         }
     }
 
-    pub fn get_collider_half_extents(&self, handle: f64) -> Option<(f64, f64, f64)> {
+    pub fn get_collider_half_extents(&self, handle: f64) -> Option<(Real, Real, Real)> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get(handle) {
@@ -1010,20 +1005,12 @@ impl World {
         }
     }
 
-    pub fn get_collider_radius(&self, handle: f64) -> Option<f64> {
+    pub fn get_collider_radius(&self, handle: f64) -> Option<Real> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get(handle) {
             if let Some(cylinder) = collider.shape().as_cylinder() {
                 Some(cylinder.radius)
-            } else if let Some(cuboid) = collider.shape().as_cuboid() {
-                Some(
-                    cuboid
-                        .half_extents
-                        .x
-                        .max(cuboid.half_extents.y)
-                        .max(cuboid.half_extents.z),
-                )
             } else {
                 None
             }
@@ -1032,7 +1019,7 @@ impl World {
         }
     }
 
-    pub fn get_collider_half_height(&self, handle: f64) -> Option<f64> {
+    pub fn get_collider_half_height(&self, handle: f64) -> Option<Real> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ColliderHandle::from_raw_parts(index, generation);
         if let Some(collider) = self.collider_set.get(handle) {

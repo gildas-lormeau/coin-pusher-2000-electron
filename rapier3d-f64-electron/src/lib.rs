@@ -345,7 +345,7 @@ impl World {
     pub fn set_revolute_joint_limits(&mut self, handle: f64, min: Real, max: Real) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ImpulseJointHandle::from_raw_parts(index, generation);
-        if let Some(joint) = self.impulse_joint_set.get_mut(handle, false) {
+        if let Some(joint) = self.impulse_joint_set.get_mut(handle, true) {
             if let Some(revolute_joint) = joint.data.as_revolute_mut() {
                 revolute_joint.set_limits([min, max]);
                 return true;
@@ -367,7 +367,7 @@ impl World {
     ) -> bool {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ImpulseJointHandle::from_raw_parts(index, generation);
-        if let Some(joint) = self.impulse_joint_set.get_mut(handle, false) {
+        if let Some(joint) = self.impulse_joint_set.get_mut(handle, true) {
             if let Some(revolute_joint) = joint.data.as_revolute_mut() {
                 revolute_joint.set_motor(target_pos, target_vel, stiffness, damping);
                 return true;

@@ -981,14 +981,6 @@ impl World {
         if let Some(collider) = self.collider_set.get(handle) {
             if let Some(cylinder) = collider.shape().as_cylinder() {
                 Some(cylinder.radius)
-            } else if let Some(cuboid) = collider.shape().as_cuboid() {
-                Some(
-                    cuboid
-                        .half_extents
-                        .x
-                        .max(cuboid.half_extents.y)
-                        .max(cuboid.half_extents.z),
-                )
             } else {
                 None
             }

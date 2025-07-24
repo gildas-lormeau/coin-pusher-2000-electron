@@ -382,7 +382,19 @@ impl World {
     pub fn get_joint_data(
         &self,
         handle: f64,
-    ) -> Option<(f64, f64, Real, Real, Real, Real, Real, Real, Real, Real, Real)> {
+    ) -> Option<(
+        f64,
+        f64,
+        Real,
+        Real,
+        Real,
+        Real,
+        Real,
+        Real,
+        Real,
+        Real,
+        Real,
+    )> {
         let (index, generation) = decode_handle_from_js(handle);
         let handle = ImpulseJointHandle::from_raw_parts(index, generation);
         if let Some(joint) = self.impulse_joint_set.get(handle) {
@@ -1179,6 +1191,36 @@ fn set_integration_parameters_min_island_size(min_island_size: f64) -> bool {
             false
         }
     }
+}
+
+#[neon::export]
+fn set_integration_parameters_dt(dt: f64) -> bool {
+    unsafe {
+        if let Some(ref mut world) = WORLD {
+            world.integration_parameters.dt = dt;
+            true
+        } else {
+            false
+        }
+    }
+}
+
+#[neon::export]
+fn integration_parameters_switch_to_standard_pgs_solver() -> bool {
+    IntegrationParameters::pgs_legacy();
+    true
+}
+
+#[neon::export]
+fn integration_parameters_switch_to_small_steps_pgs_solver() -> bool {
+    IntegrationParameters::tgs_soft();
+    true
+}
+
+#[neon::export]
+fn integration_parameters_switch_to_small_steps_pgs_solver_without_warm_start() -> bool {
+    IntegrationParameters::tgs_soft_without_warmstart();
+    true
 }
 
 #[neon::export]

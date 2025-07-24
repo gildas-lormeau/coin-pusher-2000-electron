@@ -82,6 +82,21 @@ class World {
              */
             set minIslandSize(value) {
                 nativeRapier.setIntegrationParametersMinIslandSize(value);
+            },
+            /**
+             * @param {number} value
+             */
+            set dt(value) {
+                nativeRapier.setIntegrationParametersDt(value);
+            },
+            switchToStandardPgsSolver() {
+                return nativeRapier.integrationParametersSwitchToStandardPgsSolver();
+            },
+            switchToSmallStepsPgsSolver() {
+                return nativeRapier.integrationParametersSwitchToSmallStepsPgsSolver();
+            },
+            switchToSmallStepsPgsSolverWithoutWarmStart() {
+                return nativeRapier.integrationParametersSwitchToSmallStepsPgsSolverWithoutWarmStart();
             }
         };
         this.bodies = {

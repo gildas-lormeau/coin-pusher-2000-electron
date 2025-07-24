@@ -1160,6 +1160,36 @@ fn set_integration_parameters_min_island_size(min_island_size: f64) -> bool {
 }
 
 #[neon::export]
+fn set_integration_parameters_dt(dt: f64) -> bool {
+    unsafe {
+        if let Some(ref mut world) = WORLD {
+            world.integration_parameters.dt = dt as f32;
+            true
+        } else {
+            false
+        }
+    }
+}
+
+#[neon::export]
+fn integration_parameters_switch_to_standard_pgs_solver() -> bool {
+    IntegrationParameters::pgs_legacy();
+    true
+}
+
+#[neon::export]
+fn integration_parameters_switch_to_small_steps_pgs_solver() -> bool {
+    IntegrationParameters::tgs_soft();
+    true
+}
+
+#[neon::export]
+fn integration_parameters_switch_to_small_steps_pgs_solver_without_warm_start() -> bool {
+    IntegrationParameters::tgs_soft_without_warmstart();
+    true
+}
+
+#[neon::export]
 fn get_world_bodies() -> Vec<f64> {
     unsafe {
         if let Some(ref world) = WORLD {

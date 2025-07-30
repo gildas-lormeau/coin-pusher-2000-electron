@@ -17,7 +17,6 @@ pub struct World {
     impulse_joint_set: ImpulseJointSet,
     multibody_joint_set: MultibodyJointSet,
     ccd_solver: CCDSolver,
-    query_pipeline: QueryPipeline,
     physics_hooks: (),
     event_handler: (),
 }
@@ -50,7 +49,6 @@ impl World {
             impulse_joint_set: ImpulseJointSet::new(),
             multibody_joint_set: MultibodyJointSet::new(),
             ccd_solver: CCDSolver::new(),
-            query_pipeline: QueryPipeline::new(),
             physics_hooks: (),
             event_handler: (),
         }
@@ -701,9 +699,8 @@ impl World {
             &mut self.impulse_joint_set,
             &mut self.multibody_joint_set,
             &mut self.ccd_solver,
-            Some(&mut self.query_pipeline),
-            &self.physics_hooks,
             &self.event_handler,
+            &self.physics_hooks,
         );
     }
 
